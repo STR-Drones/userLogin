@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {signIn} from "next-auth/react"
 
 
 export default function RegisterForm() {
@@ -19,6 +20,11 @@ export default function RegisterForm() {
 
     if (!business_id || !email || !password ||!name) {  // if any of these values is missing we will print a mesasage
       setError("Debes rellenar todos los campos correctamente");
+      return;
+    }
+    // Verificar si el business_id tiene exactamente 4 dígitos y si son números
+    if (!/^\d{6}$/.test(business_id)) {
+      setError("El código de empresa debe ser un número de 6 dígitos."); // si no lo tiene imprimir por pantalla el error
       return;
     }
 
@@ -53,10 +59,14 @@ export default function RegisterForm() {
       });
 
       if (res.ok) {
+        const {message} = await res.json();
         const form = e.target;
         form.reset();
-        router.push("/");
+        router.push("/"); // Rdirects the user when successfully regsitered to the log in page (or the verificationPage)
+        //router.push("/verifyRequest")
       } else {
+        const {message} = await res.json();
+        setError(message); //
         console.log("Registro de usuario fallido");
       }
     } catch (error) {
@@ -67,32 +77,43 @@ export default function RegisterForm() {
   return (
     <div className="grid place-items-center h-screen">
       <div className="shadow-lg p-10 rounded-3xl border-t-4  border-blue-200">
+      <img src="/B_W_logo.jpg" alt="Logo de la empresa" className="mt-5" style={{ width: '125px', height: 'auto', margin: 'auto' }} /> 
         <h1 className="text-xl font-bold my-10">Regístrate</h1>
         <h6 className="text-sm my-4"> Utiliza el código de empresa proporcionado por STR</h6> 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3"> {/** handle the data submission */}
         
           <input 
-            onChange={(e) => setBusiness(e.target.value)} // Nos indica que si cambia de valor asigne a setName el valor
-            type="fixed-number"
-            placeholder="Código Empresa"
+            // onChange={(e) => setBusiness(e.target.value)} // Nos indica que si cambia de valor asigne a setName el valor
+            onChange={(e) => {
+              let value = e.target.value;
+              // Verifica si el valor es un número de hasta 6 dígitos y ajusta si es necesario
+              if (/^\d{6}$/.test(value)) { // Verifica si el valor es un número de hasta 6 dígitos
+                  setBusiness(value);
+              }
+          }}
+            type="number"
+            placeholder="Código Empresa" //Valor por defecto que aparece en el campo a rellenar
+            min="000000" // Establece el valor mínimo a 0
+            max="999999" // Establece el valor máximo a 999999 (6 dígitos)
+            maxLength="6" // Limita la cantidad máxima de caracteres a 6
             className="rounded-3xl"
           />
           <input 
             onChange={(e) => setName(e.target.value)} // Nos indica que si cambia de valor asigne a setName el valor
             type="text"
-            placeholder="Nombre Usuario"
+            placeholder="Nombre Usuario" //Valor por defecto que aparece en el campo a rellenar
             className="rounded-3xl"
           />
           <input
             onChange={(e) => setEmail(e.target.value)} // Nos indica que si cambia de valor asigne a setEmail el valor
             type="text"
-            placeholder="Email"
+            placeholder="Email" //Valor por defecto que aparece en el campo a rellenar
             className="rounded-3xl"
           />
           <input
             onChange={(e) => setPassword(e.target.value)} // Nos indica que si cambia de valor asigne a setPassword el valor
             type="password"
-            placeholder="Contraseña"
+            placeholder="Contraseña" //Valor por defecto que aparece en el campo a rellenar como contraseña
             className="rounded-3xl"
           />
           <button className="bg-blue-500 bg-opacity-40  border border-blue-600 text-blue-600 font-bold cursor-pointer rounded-3xl px-6 py-2">
@@ -109,7 +130,7 @@ export default function RegisterForm() {
           <Link className="text-xs mt-3 text-right" href={"/"}>
             Ya tengo cuenta y quiero <span className="underline"> acceder</span>
           </Link>
-
+                        
         </form>
       </div>
     </div>
