@@ -1,0 +1,19 @@
+@import "~bootstrap/dist/css/bootstrap.min.css";
+/* importamos la librería bootstrap del carousel en el archivo styles.css*/
+
+.project-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 500px;
+  }
+  
+  .project-card {
+    background-color: #ebeaea;
+    border: 12px solid #706b6b;
+    border-radius: 15px;
+    padding: 150px;
+    max-width: 1600px; /* Ajusta el ancho máximo de las tarjetas según sea necesario */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
