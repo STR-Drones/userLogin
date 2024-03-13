@@ -2,22 +2,30 @@
 
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react"; // import the useSession data
+//import { useState } from "react";
+//import { getServerSession } from "next-auth";
 
-export default function UserInfo() {
-  const { data: session , status} = useSession(); // rename the session data from useSession
-  // this only provides the name and email from nextauth 
-
+// export default function UserInfo({}) { // Pasamos client como una prop desde el componente padre
+export default function UserInfo({client}) {
+    const { data: session , status, update} = useSession(); // rename the session data from useSession
+    // this only provides the name and email from nextauth 
+    console.log('client:', client)    
 
   return (
     <div className="grid place-items-center h-screen">
       <div className="shadow-lg p-8 bg-zince-300/10 flex flex-col gap-2 my-6">
         
-        <div>
-          Usuario: <span className="font-bold">{session?.user?.name}</span>
+         <div>
+              Usuario: <span className="font-bold"> {session?.user?.name}</span>
         </div>
+      
        
         <div>
           Email: <span className="font-bold">{session?.user?.email}</span> 
+        </div>
+
+        <div>
+          Projects: <span className="font-bold">{client}</span> 
         </div>
         <button
           onClick={() => signOut(

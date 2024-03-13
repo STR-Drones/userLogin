@@ -34,7 +34,7 @@ export default function RegisterForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, business_id }),
       });
 
       const { user } = await resUserExists.json(); // provide the result from the API

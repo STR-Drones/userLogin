@@ -3,7 +3,7 @@
 import Link from "next/link";
 // create state to show the values
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"; // import nextRouter from next navigation to redirect the user
 
 export default function LoginForm() {
@@ -14,29 +14,37 @@ export default function LoginForm() {
   const [error, setError] = useState("");
 
   const router = useRouter(); // Define router variable as useRouter state which is the default stage
+  const {data: session, status, update} = useSession(); //Obtiene la sesióny el método update
+
 
   const handleSubmit = async (e) => {
     e.preventDefault(); //  prevent default behaviour which is page refresh because we only want to refresh on submit
 
     try {
+      // función signIn en handleSubmit maneja la autenticación
       const res = await signIn("credentials", { // pass the name of the credential provider from Providers
+        // si la autenticación es exitosa signIn devuelve un objeto de session incluido user
         email,
         //business_id,
         password,
         redirect: false,
+
       });
 
       if (res.error) {
         setError("Usuario o Contraseña incorrectos");
         return;
       }
+      // No redireccionar aquí, permitir que la sesión se actualice primero
+      // Actualiza la sesión con la información del cliente si está disponible
+      
+      
+      router.replace("/dashboard");
 
-      router.replace("dashboard"); // This is the page to which is redirected if successfully logged in
-    } catch (error) {
+      } catch (error) {
       console.log(error);
-    }
-  };
-
+      }
+      };
   return (
     // Utiliza la imagen importada como fondo
     
